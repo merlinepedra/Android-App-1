@@ -78,6 +78,7 @@ import com.owncloud.android.ui.activity.ConflictsResolveActivity;
 import com.owncloud.android.ui.activity.UploadListActivity;
 import com.owncloud.android.ui.notifications.NotificationUtils;
 import com.owncloud.android.utils.ErrorMessageAdapter;
+import com.owncloud.android.utils.FileStorageUtils;
 import com.owncloud.android.utils.theme.ThemeColorUtils;
 
 import java.io.File;
@@ -460,7 +461,7 @@ public class FileUploader extends Service
         OCFile file,
         boolean disableRetries
                                ) {
-        if (file.getStoragePath().startsWith("/data/data/")) {
+        if (isSensitiveStoragePath(file, user.getAccountName(), getApplicationContext())) {
             Log_OC.d(TAG, "Upload from sensitive path is not allowed");
             return;
         }
@@ -1125,10 +1126,25 @@ public class FileUploader extends Service
         return FileUploader.class.getName() + UPLOAD_FINISH_MESSAGE;
     }
 
+    /**
+     * if file is within sensitive path, return false
+     */
+    @SuppressLint("SdCardPath")
+    public static boolean isSensitiveStoragePath(OCFile file, String accountName, Context context) {
+        if (file.getStoragePath().startsWith("/data/data/")) {
+            return true;
+        }
+        if (file.getStoragePath().contains(context.getPackageName())) {
+            // except internal temporary folder
+            return !file.getStoragePath().startsWith(FileStorageUtils.getInternalTemporalPath(accountName, context));
+        }
+        return false;
+    }
+
 
     /**
      * Binder to let client components to perform operations on the queue of uploads.
-     *
+     * <p>
      * It provides by itself the available operations.
      */
     public class FileUploaderBinder extends Binder implements OnDatatransferProgressListener {

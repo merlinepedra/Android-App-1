@@ -22,6 +22,7 @@
  */
 package com.owncloud.android.files.services
 
+import android.net.Uri
 import com.nextcloud.client.account.UserAccountManager
 import com.nextcloud.client.account.UserAccountManagerImpl
 import com.nextcloud.client.device.BatteryStatus
@@ -32,6 +33,7 @@ import com.owncloud.android.AbstractOnServerIT
 import com.owncloud.android.datamodel.OCFile
 import com.owncloud.android.datamodel.UploadsStorageManager
 import com.owncloud.android.db.OCUpload
+import com.owncloud.android.files.services.FileUploader.isSensitiveStoragePath
 import com.owncloud.android.lib.common.operations.OperationCancelledException
 import com.owncloud.android.lib.resources.files.ReadFileRemoteOperation
 import com.owncloud.android.lib.resources.files.model.RemoteFile
@@ -44,6 +46,7 @@ import org.junit.Test
 
 class FileUploaderIT : AbstractOnServerIT() {
     var uploadsStorageManager: UploadsStorageManager? = null
+    var accountManager: UserAccountManager? = null
 
     val connectivityServiceMock: ConnectivityService = object : ConnectivityService {
         override fun isInternetWalled(): Boolean = false
@@ -64,7 +67,7 @@ class FileUploaderIT : AbstractOnServerIT() {
     @Before
     fun setUp() {
         val contentResolver = targetContext.contentResolver
-        val accountManager: UserAccountManager = UserAccountManagerImpl.fromContext(targetContext)
+        accountManager = UserAccountManagerImpl.fromContext(targetContext)
         uploadsStorageManager = UploadsStorageManager(accountManager, contentResolver)
     }
 
@@ -509,5 +512,25 @@ class FileUploaderIT : AbstractOnServerIT() {
         assertTrue(result2.isSuccess)
 
         assertEquals(file.length(), (result2.data[0] as RemoteFile).length)
+    }
+
+    @Test
+    fun testCheckPath() {
+        val ocFile = OCFile("/sdcard/test.png")
+        ocFile.storagePath = "/sdcard/test.png"
+
+        val accountName = accountManager?.currentOwnCloudAccount?.name.orEmpty()
+        val accountNameEncoded = Uri.encode(accountName, "@")
+        
+        assertFalse(isSensitiveStoragePath(ocFile, accountName, targetContext))
+
+        ocFile.storagePath = "/data/data/test.png"
+        assertTrue(isSensitiveStoragePath(ocFile, accountName, targetContext))
+
+        ocFile.storagePath = "/data/user/0/com.nextcloud.client/files/nextcloud/tmp/$accountNameEncoded/nc/test.png"
+        assertFalse(isSensitiveStoragePath(ocFile, accountName, targetContext))
+
+        ocFile.storagePath = "/data/user/0/com.nextcloud.client/files/nextcloud/test/test.png"
+        assertTrue(isSensitiveStoragePath(ocFile, accountName, targetContext))
     }
 }
