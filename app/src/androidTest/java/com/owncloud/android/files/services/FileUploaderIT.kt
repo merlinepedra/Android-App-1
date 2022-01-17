@@ -521,7 +521,7 @@ class FileUploaderIT : AbstractOnServerIT() {
 
         val accountName = accountManager?.currentOwnCloudAccount?.name.orEmpty()
         val accountNameEncoded = Uri.encode(accountName, "@")
-        
+
         assertFalse(isSensitiveStoragePath(ocFile, accountName, targetContext))
 
         ocFile.storagePath = "/data/data/test.png"

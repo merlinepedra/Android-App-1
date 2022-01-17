@@ -20,6 +20,7 @@
 
 package com.owncloud.android.utils
 
+import androidx.test.platform.app.InstrumentationRegistry
 import com.owncloud.android.AbstractIT
 import com.owncloud.android.datamodel.MediaFolder
 import com.owncloud.android.datamodel.MediaFolderType
@@ -195,7 +196,9 @@ class SyncedFolderUtilsTest : AbstractIT() {
         getDummyFile(THUMBNAILS_FOLDER + File.separatorChar + IMAGE_JPEG)
         getDummyFile(THUMBNAILS_FOLDER + File.separatorChar + IMAGE_BITMAP)
         val folder = SyncedFolder(
-            FileStorageUtils.getTemporalPath(account.name) + File.separatorChar + THUMBNAILS_FOLDER,
+            FileStorageUtils.getInternalTemporalPath(account.name, targetContext) +
+                File.separatorChar +
+                THUMBNAILS_FOLDER,
             "",
             true,
             false,
@@ -232,8 +235,10 @@ class SyncedFolderUtilsTest : AbstractIT() {
         fun setUp() {
             val tempPath =
                 File(
-                    FileStorageUtils.getTemporalPath(account.name) + File.separatorChar +
-                        THUMBNAILS_FOLDER
+                    FileStorageUtils.getInternalTemporalPath(
+                        account.name,
+                        InstrumentationRegistry.getInstrumentation().targetContext
+                    ) + File.separatorChar + THUMBNAILS_FOLDER
                 )
             if (!tempPath.exists()) {
                 tempPath.mkdirs()
@@ -257,7 +262,14 @@ class SyncedFolderUtilsTest : AbstractIT() {
         @AfterClass
         @JvmStatic
         fun tearDown() {
-            FileUtils.deleteDirectory(File(FileStorageUtils.getTemporalPath(account.name)))
+            FileUtils.deleteDirectory(
+                File(
+                    FileStorageUtils.getInternalTemporalPath(
+                        account.name,
+                        InstrumentationRegistry.getInstrumentation().targetContext
+                    )
+                )
+            )
         }
     }
 }

@@ -95,22 +95,6 @@ public final class FileStorageUtils {
     }
 
     /**
-     * Get absolute path to tmp folder inside datafolder in sd-card for given accountName.
-     */
-    public static String getTemporalPath(String accountName) {
-        // FIXME broken in SDK 30
-        return MainApp.getStoragePath()
-                + File.separator
-                + MainApp.getDataFolder()
-                + File.separator
-                + "tmp"
-                + File.separator
-                + Uri.encode(accountName, "@");
-        // URL encoding is an 'easy fix' to overcome that NTFS and FAT32 don't allow ":" in file names,
-        // that can be in the accountName since 0.1.190B
-    }
-
-    /**
      * Get absolute path to tmp folder inside app folder for given accountName.
      */
     public static String getInternalTemporalPath(String accountName, Context context) {
