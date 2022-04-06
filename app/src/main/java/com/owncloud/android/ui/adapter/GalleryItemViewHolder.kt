@@ -22,7 +22,43 @@
 
 package com.owncloud.android.ui.adapter
 
+import android.view.View
+import android.widget.ImageView
 import com.afollestad.sectionedrecyclerview.SectionedViewHolder
-import com.owncloud.android.databinding.GridItemBinding
+import com.elyeproj.loaderviewlibrary.LoaderImageView
+import com.owncloud.android.databinding.GridImageBinding
 
-class GalleryItemViewHolder(val binding: GridItemBinding) : SectionedViewHolder(binding.root)
+class GalleryItemViewHolder(val binding: GridImageBinding) : SectionedViewHolder(binding.root),
+    ListGridImageViewHolder {
+    override fun getThumbnail(): ImageView {
+        return binding.thumbnail
+    }
+
+    override fun getShimmerThumbnail(): LoaderImageView {
+        return binding.thumbnailShimmer
+    }
+
+    override fun getFavorite(): ImageView {
+        return binding.favoriteAction
+    }
+
+    override fun getLocalFileIndicator(): ImageView {
+        return binding.localFileIndicator
+    }
+
+    override fun getShared(): ImageView {
+        return binding.sharedIcon
+    }
+
+    override fun getCheckbox(): ImageView {
+        return binding.customCheckbox
+    }
+
+    override fun getItemLayout(): View {
+        return binding.ListItemLayout
+    }
+
+    override fun getUnreadComments(): ImageView {
+        return binding.unreadComments
+    }
+}

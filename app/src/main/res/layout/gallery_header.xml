@@ -24,14 +24,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/alternate_half_padding"
-    android:paddingEnd="@dimen/zero"
-    android:paddingStart="@dimen/standard_padding"
     android:paddingTop="@dimen/alternate_half_padding"
     xmlns:tools="http://schemas.android.com/tools">
 
     <TextView
-        android:id="@+id/date"
+        android:id="@+id/month"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="July 2016" />
+        android:layout_marginStart="@dimen/standard_margin"
+        android:layout_marginTop="@dimen/standard_margin"
+        android:layout_marginEnd="@dimen/standard_half_margin"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textStyle="bold"
+        tools:text="July" />
+
+    <TextView
+        android:id="@+id/year"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/standard_margin"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        tools:text="2016" />
 </LinearLayout>

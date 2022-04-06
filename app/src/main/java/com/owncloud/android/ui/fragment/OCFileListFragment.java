@@ -78,6 +78,7 @@ import com.owncloud.android.ui.activity.FileDisplayActivity;
 import com.owncloud.android.ui.activity.FolderPickerActivity;
 import com.owncloud.android.ui.activity.OnEnforceableRefreshListener;
 import com.owncloud.android.ui.activity.UploadFilesActivity;
+import com.owncloud.android.ui.adapter.CommonOCFileListAdapterInterface;
 import com.owncloud.android.ui.adapter.OCFileListAdapter;
 import com.owncloud.android.ui.dialog.ChooseRichDocumentsTemplateDialogFragment;
 import com.owncloud.android.ui.dialog.ChooseTemplateDialogFragment;
@@ -411,7 +412,7 @@ public class OCFileListFragment extends ExtendedListFragment implements
             isGridViewPreferred(mFile)
         );
 
-        setRecyclerViewAdapter(mAdapter);
+        setRecyclerViewAdapter((RecyclerView.Adapter) mAdapter);
     }
 
     protected void prepareCurrentSearch(SearchEvent event) {
@@ -912,11 +913,11 @@ public class OCFileListFragment extends ExtendedListFragment implements
 
     @Override
     public void onItemClicked(OCFile file) {
-        if (getAdapter().isMultiSelect()) {
+        if (getCommonAdapter().isMultiSelect()) {
             toggleItemToCheckedList(file);
         } else {
             if (file != null) {
-                int position = mAdapter.getItemPosition(file);
+                int position = getCommonAdapter().getItemPosition(file);
 
                 if (file.isFolder()) {
                     resetHeaderScrollingState();
@@ -1385,6 +1386,10 @@ public class OCFileListFragment extends ExtendedListFragment implements
         getAdapter().setGridView(grid);
         getRecyclerView().setAdapter(getAdapter());
         getAdapter().notifyDataSetChanged();
+    }
+
+    public CommonOCFileListAdapterInterface getCommonAdapter() {
+        return mAdapter;
     }
 
     public OCFileListAdapter getAdapter() {

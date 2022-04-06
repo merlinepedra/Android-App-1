@@ -31,6 +31,7 @@ import com.owncloud.android.R;
 import com.owncloud.android.datamodel.OCFile;
 import com.owncloud.android.lib.common.utils.Log_OC;
 import com.owncloud.android.ui.activity.FileDisplayActivity;
+import com.owncloud.android.ui.adapter.CommonOCFileListAdapterInterface;
 import com.owncloud.android.ui.adapter.GalleryAdapter;
 import com.owncloud.android.ui.asynctasks.GallerySearchTask;
 import com.owncloud.android.ui.events.ChangeMenuEvent;
@@ -100,7 +101,12 @@ public class GalleryFragment extends OCFileListFragment {
 
     @Override
     protected void setAdapter(Bundle args) {
-        mAdapter = new GalleryAdapter(requireContext());
+        mAdapter = new GalleryAdapter(requireContext(),
+                                      accountManager.getUser(),
+                                      this,
+                                      preferences,
+                                      mContainerActivity.getStorageManager(),
+                                      mContainerActivity);
 
 //        val spacing = resources.getDimensionPixelSize(R.dimen.media_grid_spacing)
 //        binding.list.addItemDecoration(MediaGridItemDecoration(spacing))
@@ -129,6 +135,11 @@ public class GalleryFragment extends OCFileListFragment {
         super.onRefresh();
 
         handleSearchEvent();
+    }
+
+    @Override
+    public CommonOCFileListAdapterInterface getCommonAdapter() {
+        return mAdapter;
     }
 
     @Override

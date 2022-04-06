@@ -131,7 +131,9 @@ public final class DisplayUtils {
     private static final double BYTE_SIZE_DIVIDER_DOUBLE = 1024.0;
     private static final int DATE_TIME_PARTS_SIZE = 2;
 
-    private static final String MONTH_YEAR_PATTERN = "MMMM yyyy";
+    public static final String MONTH_YEAR_PATTERN = "MMMM yyyy";
+    public static final String MONTH_PATTERN = "MMMM";
+    public static final String YEAR_PATTERN = "yyyy";
 
     private static Map<String, String> mimeType2HumanReadable;
 
@@ -824,8 +826,8 @@ public final class DisplayUtils {
         }
     }
 
-    public static String getMonthYear(long timestamp, Context context) {
-        DateFormat df = new SimpleDateFormat(MONTH_YEAR_PATTERN, context.getResources().getConfiguration().locale);
+    public static String getDateByPattern(long timestamp, Context context, String pattern) {
+        DateFormat df = new SimpleDateFormat(pattern, context.getResources().getConfiguration().locale);
         df.setTimeZone(TimeZone.getTimeZone(TimeZone.getDefault().getID()));
 
         return df.format(timestamp);
