@@ -189,7 +189,7 @@ public class OCFileListFragment extends ExtendedListFragment implements
     protected FileFragment.ContainerActivity mContainerActivity;
 
     protected OCFile mFile;
-    protected OCFileListAdapter mAdapter;
+    private OCFileListAdapter mAdapter;
     protected boolean mOnlyFoldersClickable;
     protected boolean mFileSelectable;
 
@@ -326,7 +326,9 @@ public class OCFileListFragment extends ExtendedListFragment implements
     @Override
     public void onPause() {
         super.onPause();
-        mAdapter.cancelAllPendingTasks();
+        if (mAdapter != null) {
+            mAdapter.cancelAllPendingTasks();
+        }
 
         if (getActivity() != null) {
             getActivity().getIntent().removeExtra(OCFileListFragment.SEARCH_EVENT);
@@ -349,18 +351,8 @@ public class OCFileListFragment extends ExtendedListFragment implements
         mOnlyFoldersClickable = args != null && args.getBoolean(ARG_ONLY_FOLDERS_CLICKABLE, false);
         mFileSelectable = args != null && args.getBoolean(ARG_FILE_SELECTABLE, false);
         mLimitToMimeType = args != null ? args.getString(ARG_MIMETYPE, "") : "";
-        boolean hideItemOptions = args != null && args.getBoolean(ARG_HIDE_ITEM_OPTIONS, false);
 
-        mAdapter = new OCFileListAdapter(
-            getActivity(),
-            accountManager.getUser(),
-            preferences,
-            mContainerActivity,
-            this,
-            hideItemOptions,
-            isGridViewPreferred(mFile)
-        );
-        setRecyclerViewAdapter(mAdapter);
+        setAdapter(args);
 
         mHideFab = args != null && args.getBoolean(ARG_HIDE_FAB, false);
 
@@ -404,6 +396,22 @@ public class OCFileListFragment extends ExtendedListFragment implements
             fileDisplayActivity.updateActionBarTitleAndHomeButton(fileDisplayActivity.getCurrentDir());
         }
         listDirectory(false, false);
+    }
+
+    protected void setAdapter(Bundle args) {
+        boolean hideItemOptions = args != null && args.getBoolean(ARG_HIDE_ITEM_OPTIONS, false);
+
+        mAdapter = new OCFileListAdapter(
+            getActivity(),
+            accountManager.getUser(),
+            preferences,
+            mContainerActivity,
+            this,
+            hideItemOptions,
+            isGridViewPreferred(mFile)
+        );
+
+        setRecyclerViewAdapter(mAdapter);
     }
 
     protected void prepareCurrentSearch(SearchEvent event) {

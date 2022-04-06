@@ -89,17 +89,18 @@ import java.math.BigDecimal;
 import java.net.IDN;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.widget.AppCompatDrawableManager;
 import androidx.core.content.res.ResourcesCompat;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -129,6 +130,8 @@ public final class DisplayUtils {
     private static final int BYTE_SIZE_DIVIDER = 1024;
     private static final double BYTE_SIZE_DIVIDER_DOUBLE = 1024.0;
     private static final int DATE_TIME_PARTS_SIZE = 2;
+
+    private static final String MONTH_YEAR_PATTERN = "MMMM yyyy";
 
     private static Map<String, String> mimeType2HumanReadable;
 
@@ -819,5 +822,12 @@ public final class DisplayUtils {
             default:
                 return R.string.menu_item_sort_by_name_a_z;
         }
+    }
+
+    public static String getMonthYear(long timestamp, Context context) {
+        DateFormat df = new SimpleDateFormat(MONTH_YEAR_PATTERN, context.getResources().getConfiguration().locale);
+        df.setTimeZone(TimeZone.getTimeZone(TimeZone.getDefault().getID()));
+
+        return df.format(timestamp);
     }
 }

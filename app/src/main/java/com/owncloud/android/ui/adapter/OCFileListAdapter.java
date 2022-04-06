@@ -1058,16 +1058,7 @@ public class OCFileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     public void showAllGalleryItems(FileDataStorageManager storageManager) {
-        if (mStorageManager == null) {
-            mStorageManager = storageManager;
-        }
-        mFiles = mStorageManager.getAllGalleryItems();
-        FileStorageUtils.sortOcFolderDescDateModifiedWithoutFavoritesFirst(mFiles);
 
-        mFilesAll.clear();
-        mFilesAll.addAll(mFiles);
-
-        new Handler(Looper.getMainLooper()).post(this::notifyDataSetChanged);
     }
 
     public void showVirtuals(VirtualFolderType type, boolean onlyImages, FileDataStorageManager storageManager) {
