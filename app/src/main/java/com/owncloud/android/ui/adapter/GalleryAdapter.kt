@@ -35,7 +35,6 @@ import com.owncloud.android.datamodel.FileDataStorageManager
 import com.owncloud.android.datamodel.GalleryItems
 import com.owncloud.android.datamodel.OCFile
 import com.owncloud.android.utils.DisplayUtils
-import com.owncloud.android.utils.FileStorageUtils
 import java.util.Calendar
 import java.util.Date
 
@@ -104,9 +103,10 @@ class GalleryAdapter(val context: Context) : SectionedRecyclerViewAdapter<Sectio
 
         files = items
             .groupBy { firstOfMonth(it.creationTimestamp) }
-            .map { GalleryItems(it.key, FileStorageUtils.sortOcFolderDescDateModifiedWithoutFavoritesFirst(it.value)) }
-            .sortedBy { it.date }
-            .reversed()
+            .map { GalleryItems(it.key, it.value) }
+            .sortedBy { it.date }.reversed()
+
+        //FileStorageUtils.sortOcFolderDescDateModifiedWithoutFavoritesFirst(mFiles)
 
         Handler(Looper.getMainLooper()).post { notifyDataSetChanged() }
     }
