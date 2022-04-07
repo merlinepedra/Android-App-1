@@ -47,11 +47,11 @@ import java.util.Date
 
 class GalleryAdapter(
     val context: Context,
-    val user: User,
-    val ocFileListFragmentInterface: OCFileListFragmentInterface,
-    val preferences: AppPreferences,
-    var storageManager: FileDataStorageManager,
-    val transferServiceGetter: ComponentsGetter
+    user: User,
+    ocFileListFragmentInterface: OCFileListFragmentInterface,
+    preferences: AppPreferences,
+    storageManager: FileDataStorageManager,
+    transferServiceGetter: ComponentsGetter
 ) : SectionedRecyclerViewAdapter<SectionedViewHolder>(), CommonOCFileListAdapterInterface {
     private var files: List<GalleryItems> = mutableListOf()
     private var ocFileListDelegate: OCFileListDelegate
