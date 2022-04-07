@@ -136,7 +136,7 @@ class GalleryAdapter(
         val items = storageManager.allGalleryItems
 
         files = items
-            .groupBy { firstOfMonth(it.creationTimestamp) }
+            .groupBy { firstOfMonth(it.modificationTimestamp) }
             .map { GalleryItems(it.key, FileStorageUtils.sortOcFolderDescDateModifiedWithoutFavoritesFirst(it.value)) }
             .sortedBy { it.date }.reversed()
 
@@ -145,7 +145,7 @@ class GalleryAdapter(
 
     private fun firstOfMonth(timestamp: Long): Long {
         val cal = Calendar.getInstance()
-        cal.time = Date(timestamp * 1000)
+        cal.time = Date(timestamp)
         cal.set(Calendar.DAY_OF_MONTH, cal.getActualMinimum(Calendar.DAY_OF_MONTH))
         cal.set(Calendar.HOUR_OF_DAY, 0)
         cal.set(Calendar.MINUTE, 0)
