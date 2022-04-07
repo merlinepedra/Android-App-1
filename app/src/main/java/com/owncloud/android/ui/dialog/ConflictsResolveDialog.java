@@ -37,7 +37,6 @@ import com.owncloud.android.datamodel.OCFile;
 import com.owncloud.android.datamodel.ThumbnailsCacheManager;
 import com.owncloud.android.lib.common.utils.Log_OC;
 import com.owncloud.android.ui.adapter.LocalFileListAdapter;
-import com.owncloud.android.ui.adapter.OCFileListDelegate;
 import com.owncloud.android.utils.DisplayUtils;
 import com.owncloud.android.utils.theme.ThemeButtonUtils;
 import com.owncloud.android.utils.theme.ThemeCheckableUtils;
@@ -197,14 +196,14 @@ public class ConflictsResolveDialog extends DialogFragment {
                                                                             existingFile.getModificationTimestamp()));
 
         binding.existingThumbnail.setTag(existingFile.getFileId());
-        OCFileListDelegate.setThumbnail(existingFile,
-                                        binding.existingThumbnail,
-                                        user,
-                                        new FileDataStorageManager(user,
-                                                                   requireContext().getContentResolver()),
-                                        asyncTasks,
-                                        false,
-                                        getContext());
+        DisplayUtils.setThumbnail(existingFile,
+                                  binding.existingThumbnail,
+                                  user,
+                                  new FileDataStorageManager(user,
+                                                             requireContext().getContentResolver()),
+                                  asyncTasks,
+                                  false,
+                                  getContext());
 
         View.OnClickListener checkBoxClickListener = v -> {
             positiveButton.setEnabled(binding.newCheckbox.isChecked() || binding.existingCheckbox.isChecked());
