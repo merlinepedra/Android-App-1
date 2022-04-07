@@ -109,6 +109,27 @@ public class OCFileListDelegate {
         highlightedItem = null;
     }
 
+    public void removeCheckedFile(OCFile file) {
+        checkedFiles.remove(file);
+    }
+
+    public void addToCheckedFiles(List<OCFile> files) {
+        checkedFiles.addAll(files);
+    }
+
+    public Set<OCFile> getCheckedItems() {
+        return checkedFiles;
+    }
+
+    public void setCheckedItem(Set<OCFile> files) {
+        checkedFiles.clear();
+        checkedFiles.addAll(files);
+    }
+
+    public void clearCheckedItems() {
+        checkedFiles.clear();
+    }
+
     public static void setThumbnail(OCFile file,
                                     ImageView thumbnailView,
                                     User user,

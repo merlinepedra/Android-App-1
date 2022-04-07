@@ -700,7 +700,7 @@ public class OCFileListFragment extends ExtendedListFragment implements
             // hide FAB in multi selection mode
             setFabVisible(false);
 
-            mAdapter.setMultiSelect(true);
+            getCommonAdapter().setMultiSelect(true);
             return true;
         }
 
@@ -709,12 +709,12 @@ public class OCFileListFragment extends ExtendedListFragment implements
          */
         @Override
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            final int checkedCount = mAdapter.getCheckedItems().size();
-            Set<OCFile> checkedFiles = mAdapter.getCheckedItems();
+            Set<OCFile> checkedFiles = getCommonAdapter().getCheckedItems();
+            final int checkedCount = checkedFiles.size();
             String title = getResources().getQuantityString(R.plurals.items_selected_count, checkedCount, checkedCount);
             mode.setTitle(title);
             FileMenuFilter mf = new FileMenuFilter(
-                mAdapter.getFiles().size(),
+                getCommonAdapter().getFilesCount(),
                 checkedFiles,
                 mContainerActivity,
                 getActivity(),
@@ -737,7 +737,7 @@ public class OCFileListFragment extends ExtendedListFragment implements
          */
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            Set<OCFile> checkedFiles = mAdapter.getCheckedItems();
+            Set<OCFile> checkedFiles = getCommonAdapter().getCheckedItems();
             return onFileActionChosen(item, checkedFiles);
         }
 
@@ -747,14 +747,14 @@ public class OCFileListFragment extends ExtendedListFragment implements
         @Override
         public void onDestroyActionMode(ActionMode mode) {
             mActiveActionMode = null;
-            
+
             // show FAB on multi selection mode exit
             if (!mHideFab && !searchFragment) {
                 setFabVisible(true);
             }
 
-            mAdapter.setMultiSelect(false);
-            mAdapter.clearCheckedItems();
+            getCommonAdapter().setMultiSelect(false);
+            getCommonAdapter().clearCheckedItems();
         }
 
         public void storeStateIn(Bundle outState) {
@@ -874,10 +874,10 @@ public class OCFileListFragment extends ExtendedListFragment implements
      * @param file The concerned OCFile by the selection/deselection
      */
     private void toggleItemToCheckedList(OCFile file) {
-        if (getAdapter().isCheckedFile(file)) {
-            getAdapter().removeCheckedFile(file);
+        if (getCommonAdapter().isCheckedFile(file)) {
+            getCommonAdapter().removeCheckedFile(file);
         } else {
-            getAdapter().addCheckedFile(file);
+            getCommonAdapter().addCheckedFile(file);
         }
         updateActionModeFile(file);
     }
@@ -890,7 +890,7 @@ public class OCFileListFragment extends ExtendedListFragment implements
         mIsActionModeNew = false;
         if (mActiveActionMode != null) {
             mActiveActionMode.invalidate();
-            mAdapter.notifyItemChanged(getAdapter().getItemPosition(file));
+            getCommonAdapter().notifyItemChanged(file);
         }
     }
 
@@ -903,7 +903,7 @@ public class OCFileListFragment extends ExtendedListFragment implements
                 toggleItemToCheckedList(file);
             } else {
                 actionBarActivity.startActionMode(mMultiChoiceModeListener);
-                getAdapter().addCheckedFile(file);
+                getCommonAdapter().addCheckedFile(file);
             }
             updateActionModeFile(file);
         }
@@ -1685,7 +1685,7 @@ public class OCFileListFragment extends ExtendedListFragment implements
         if (select) {
             ocFileListAdapter.addAllFilesToCheckedFiles();
         } else {
-            ocFileListAdapter.removeAllFilesFromCheckedFiles();
+            ocFileListAdapter.clearCheckedItems();
         }
 
         for (int i = 0; i < mAdapter.getItemCount(); i++) {

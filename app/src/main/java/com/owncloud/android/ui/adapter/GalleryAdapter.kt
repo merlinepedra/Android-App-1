@@ -27,6 +27,7 @@ import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.annotation.VisibleForTesting
 import com.afollestad.sectionedrecyclerview.SectionedRecyclerViewAdapter
 import com.afollestad.sectionedrecyclerview.SectionedViewHolder
 import com.nextcloud.client.account.User
@@ -170,7 +171,8 @@ class GalleryAdapter(
     }
 
     override fun getItemPosition(file: OCFile): Int {
-        TODO("Not yet implemented")
+        val item = files.find { it.files.contains(file) }
+        return getAbsolutePosition(files.indexOf(item), item?.files?.indexOf(file) ?: 0)
     }
 
     override fun swapDirectory(
@@ -189,5 +191,43 @@ class GalleryAdapter(
 
     override fun setSortOrder(mFile: OCFile, sortOrder: FileSortOrder) {
         TODO("Not yet implemented")
+    }
+
+    override fun addCheckedFile(file: OCFile) {
+        ocFileListDelegate.addCheckedFile(file)
+    }
+
+    override fun isCheckedFile(file: OCFile): Boolean {
+        return ocFileListDelegate.isCheckedFile(file)
+    }
+
+    override fun getCheckedItems(): Set<OCFile> {
+        return ocFileListDelegate.checkedItems
+    }
+
+    override fun removeCheckedFile(file: OCFile) {
+        ocFileListDelegate.removeCheckedFile(file)
+    }
+
+    override fun notifyItemChanged(file: OCFile) {
+        notifyDataSetChanged()
+    }
+
+    override fun getFilesCount(): Int {
+        return files.fold(0) { acc, item -> acc + item.files.size }
+    }
+
+    override fun setMultiSelect(boolean: Boolean) {
+        ocFileListDelegate.isMultiSelect = boolean
+        notifyDataSetChanged()
+    }
+
+    override fun clearCheckedItems() {
+        ocFileListDelegate.clearCheckedItems()
+    }
+
+    @VisibleForTesting
+    fun addFiles(items: List<GalleryItems>) {
+        files = items
     }
 }
