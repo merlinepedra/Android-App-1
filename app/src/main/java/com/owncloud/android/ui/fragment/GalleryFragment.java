@@ -270,7 +270,7 @@ public class GalleryFragment extends OCFileListFragment {
         }
     }
 
-    public GalleryAdapter getGalleryAdapter() {
-        return mAdapter;
+    public void showAllGalleryItems() {
+        mAdapter.showAllGalleryItems(mContainerActivity.getStorageManager());
     }
 }
