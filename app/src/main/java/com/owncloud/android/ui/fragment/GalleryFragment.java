@@ -79,7 +79,7 @@ public class GalleryFragment extends OCFileListFragment {
         getRecyclerView().addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                loadMoreWhenEndReached(recyclerView, dy);
+               // loadMoreWhenEndReached(recyclerView, dy);
             }
         });
 
@@ -113,7 +113,10 @@ public class GalleryFragment extends OCFileListFragment {
         setRecyclerViewAdapter(mAdapter);
 
 
-        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), getColumnsCount());
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 15);
+        layoutManager.setSpanSizeLookup(mAdapter.getSpanSizeLookup());
+
+
 //        ((GridLayoutManager) layoutManager).setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
 //            @Override
 //            public int getSpanSize(int position) {
@@ -126,7 +129,7 @@ public class GalleryFragment extends OCFileListFragment {
 //            }
 //        });
 
-        mAdapter.setLayoutManager(layoutManager);
+        // mAdapter.setLayoutManager(layoutManager);
         getRecyclerView().setLayoutManager(layoutManager);
     }
 
@@ -168,7 +171,7 @@ public class GalleryFragment extends OCFileListFragment {
 
         setFabVisible(false);
 
-        searchAndDisplay();
+        // searchAndDisplay();
     }
 
     private void searchAndDisplay() {

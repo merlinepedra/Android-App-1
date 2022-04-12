@@ -23,11 +23,14 @@
 package com.owncloud.android.ui.adapter
 
 import android.content.Context
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.annotation.VisibleForTesting
+import androidx.recyclerview.widget.GridLayoutManager
 import com.afollestad.sectionedrecyclerview.SectionedRecyclerViewAdapter
 import com.afollestad.sectionedrecyclerview.SectionedViewHolder
 import com.nextcloud.client.account.User
@@ -35,8 +38,10 @@ import com.nextcloud.client.preferences.AppPreferences
 import com.owncloud.android.databinding.GalleryHeaderBinding
 import com.owncloud.android.databinding.GridImageBinding
 import com.owncloud.android.datamodel.FileDataStorageManager
+import com.owncloud.android.datamodel.GalleryFile
 import com.owncloud.android.datamodel.GalleryItems
 import com.owncloud.android.datamodel.OCFile
+import com.owncloud.android.datamodel.ThumbnailsCacheManager
 import com.owncloud.android.ui.activity.ComponentsGetter
 import com.owncloud.android.ui.interfaces.OCFileListFragmentInterface
 import com.owncloud.android.utils.DisplayUtils
@@ -55,6 +60,7 @@ class GalleryAdapter(
 ) : SectionedRecyclerViewAdapter<SectionedViewHolder>(), CommonOCFileListAdapterInterface {
     private var files: List<GalleryItems> = mutableListOf()
     private var ocFileListDelegate: OCFileListDelegate
+    private val GRID_COLUMN = 15
 
     init {
         shouldShowFooters(false)
@@ -71,6 +77,19 @@ class GalleryAdapter(
             false,
             false
         )
+    }
+
+    val spanSizeLookup: GridLayoutManager.SpanSizeLookup by lazy {
+        object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                if (getRelativePosition(position).relativePos() == -1) {
+                    return GRID_COLUMN
+                } else {
+                    val itemCoord = getRelativePosition(position)
+                    return files[itemCoord.section()].files[itemCoord.relativePos()].columns
+                }
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SectionedViewHolder {
@@ -97,9 +116,9 @@ class GalleryAdapter(
     ) {
         if (holder != null) {
             val itemViewHolder = holder as GalleryItemViewHolder
-            val ocFile = files[section].files[relativePosition]
+            val galleryFile = files[section].files[relativePosition]
 
-            ocFileListDelegate.bindGridViewHolder(itemViewHolder, ocFile)
+            ocFileListDelegate.bindGridViewHolder(itemViewHolder, galleryFile.file)
         }
     }
 
@@ -132,15 +151,60 @@ class GalleryAdapter(
         TODO("Not yet implemented")
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     fun showAllGalleryItems(storageManager: FileDataStorageManager) {
         val items = storageManager.allGalleryItems
 
         files = items
             .groupBy { firstOfMonth(it.modificationTimestamp) }
-            .map { GalleryItems(it.key, FileStorageUtils.sortOcFolderDescDateModifiedWithoutFavoritesFirst(it.value)) }
-            .sortedBy { it.date }.reversed()
+            .map {
+                GalleryItems(
+                    it.key,
+                    mapFiles(FileStorageUtils.sortOcFolderDescDateModifiedWithoutFavoritesFirst(it.value))
+                )
+            }
+            .sortedBy { it.date }.reversed().take(5)
 
         Handler(Looper.getMainLooper()).post { notifyDataSetChanged() }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    private fun mapFiles(files: List<OCFile>): List<GalleryFile> {
+        val columns = GRID_COLUMN
+
+        val list = ArrayList<GalleryFile>()
+        val row = ArrayList<GalleryFile>()
+        var rowRatios = 0f
+        files.forEach { it: OCFile ->
+            val imageKey = ThumbnailsCacheManager.PREFIX_THUMBNAIL + it.remoteId
+
+            // Check disk cache in background thread
+            val thumbnail = ThumbnailsCacheManager.getBitmapFromDiskCache(imageKey)
+
+            val imageRatio = if (thumbnail != null) {
+                thumbnail.width / thumbnail.height.toFloat()
+            } else {
+                1f
+            }
+
+            val item = GalleryFile(it, imageRatio)
+
+            list.add(item)
+            rowRatios += item.imageRatio
+            if (rowRatios > 2f) {
+                var used = 0
+                row.forEach { it2: GalleryFile ->
+                    it2.columns = ((columns * it2.imageRatio) / rowRatios).toInt()
+                    used += it2.columns
+                }
+                item.columns = columns - used
+                row.clear()
+                rowRatios = 0f
+            } else {
+                row.add(item)
+            }
+        }
+        return list
     }
 
     private fun firstOfMonth(timestamp: Long): Long {
@@ -171,8 +235,10 @@ class GalleryAdapter(
     }
 
     override fun getItemPosition(file: OCFile): Int {
-        val item = files.find { it.files.contains(file) }
-        return getAbsolutePosition(files.indexOf(item), item?.files?.indexOf(file) ?: 0)
+        val item = files.find { it.files.contains(it.files.find { galleryFile -> galleryFile.file == file }) }
+        val galleryFile = item?.files?.find { it.file == file }
+
+        return getAbsolutePosition(files.indexOf(item), item?.files?.indexOf(galleryFile) ?: 0)
     }
 
     override fun swapDirectory(
