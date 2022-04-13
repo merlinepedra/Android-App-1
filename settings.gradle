@@ -1,3 +1,8 @@
 rootProject.name = 'Nextcloud'
 
 include ':app'
+includeBuild('../android-library') {
+    dependencySubstitution {
+        substitute module('com.github.nextcloud:android-library') using project(':library')
+    }
+}

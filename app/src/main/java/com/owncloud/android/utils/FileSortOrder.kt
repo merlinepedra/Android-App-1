@@ -38,6 +38,10 @@ open class FileSortOrder(@JvmField var name: String, var isAscending: Boolean) {
         trashBinView, localFileListView
     }
 
+    enum class SortType {
+        SIZE, ALPHABET, DATE
+    }
+
     companion object {
         const val sort_a_to_z_id = "sort_a_to_z"
         const val sort_z_to_a_id = "sort_z_to_a"

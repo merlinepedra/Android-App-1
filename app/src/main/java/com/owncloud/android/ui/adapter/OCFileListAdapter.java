@@ -72,11 +72,15 @@ import com.owncloud.android.utils.FileStorageUtils;
 import com.owncloud.android.utils.MimeTypeUtil;
 import com.owncloud.android.utils.theme.CapabilityUtils;
 import com.owncloud.android.utils.theme.ThemeColorUtils;
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.Vector;
 
@@ -90,7 +94,7 @@ import androidx.recyclerview.widget.RecyclerView;
  */
 public class OCFileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     implements DisplayUtils.AvatarGenerationListener,
-    CommonOCFileListAdapterInterface {
+    CommonOCFileListAdapterInterface, FastScrollRecyclerView.SectionedAdapter {
 
     private static final int showFilenameColumnThreshold = 4;
     private final String userId;
@@ -118,6 +122,8 @@ public class OCFileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private boolean onlyOnDevice;
     private final OCFileListDelegate ocFileListDelegate;
     private FileSortOrder sortOrder;
+
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy", Locale.getDefault());
 
     public OCFileListAdapter(
         Activity activity,
