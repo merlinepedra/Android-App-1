@@ -30,6 +30,7 @@ import android.os.Parcelable;
 import android.text.TextUtils;
 
 import com.owncloud.android.R;
+import com.owncloud.android.lib.common.network.ImageDimension;
 import com.owncloud.android.lib.common.network.WebdavEntry;
 import com.owncloud.android.lib.common.network.WebdavUtils;
 import com.owncloud.android.lib.common.utils.Log_OC;
@@ -95,6 +96,7 @@ public class OCFile implements Parcelable, Comparable<OCFile>, ServerFileInterfa
     String note;
     private List<ShareeUser> sharees;
     private String richWorkspace;
+    private ImageDimension imageDimension;
 
     /**
      * URI to the local path of the file contents, if stored in the device; cached after first call
@@ -830,5 +832,13 @@ public class OCFile implements Parcelable, Comparable<OCFile>, ServerFileInterfa
 
     public void setFirstShareTimestamp(long firstShareTimestamp) {
         this.firstShareTimestamp = firstShareTimestamp;
+    }
+
+    public void setImageDimension(ImageDimension imageDimension) {
+        this.imageDimension = imageDimension;
+    }
+
+    public ImageDimension getImageDimension() {
+        return imageDimension;
     }
 }

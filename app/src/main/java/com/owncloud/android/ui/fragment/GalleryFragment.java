@@ -113,7 +113,7 @@ public class GalleryFragment extends OCFileListFragment {
         setRecyclerViewAdapter(mAdapter);
 
 
-        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 15);
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), GalleryAdapter.GRID_COLUMN);
         layoutManager.setSpanSizeLookup(mAdapter.getSpanSizeLookup());
 
 
@@ -171,7 +171,7 @@ public class GalleryFragment extends OCFileListFragment {
 
         setFabVisible(false);
 
-        // searchAndDisplay();
+        searchAndDisplay();
     }
 
     private void searchAndDisplay() {

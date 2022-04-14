@@ -60,7 +60,10 @@ class GalleryAdapter(
 ) : SectionedRecyclerViewAdapter<SectionedViewHolder>(), CommonOCFileListAdapterInterface {
     private var files: List<GalleryItems> = mutableListOf()
     private var ocFileListDelegate: OCFileListDelegate
-    private val GRID_COLUMN = 15
+
+    companion object {
+        const val GRID_COLUMN = 2
+    }
 
     init {
         shouldShowFooters(false)
@@ -85,6 +88,7 @@ class GalleryAdapter(
                 if (getRelativePosition(position).relativePos() == -1) {
                     return GRID_COLUMN
                 } else {
+                    // return 1
                     val itemCoord = getRelativePosition(position)
                     return files[itemCoord.section()].files[itemCoord.relativePos()].columns
                 }
@@ -163,13 +167,18 @@ class GalleryAdapter(
                     mapFiles(FileStorageUtils.sortOcFolderDescDateModifiedWithoutFavoritesFirst(it.value))
                 )
             }
-            .sortedBy { it.date }.reversed().take(5)
+            .sortedBy { it.date }.reversed()
 
         Handler(Looper.getMainLooper()).post { notifyDataSetChanged() }
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
     private fun mapFiles(files: List<OCFile>): List<GalleryFile> {
+        return files.map { GalleryFile(it, 1f) }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    private fun mapFiles2(files: List<OCFile>): List<GalleryFile> {
         val columns = GRID_COLUMN
 
         val list = ArrayList<GalleryFile>()

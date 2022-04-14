@@ -233,6 +233,7 @@ public final class FileStorageUtils {
         file.setNote(remote.getNote());
         file.setSharees(new ArrayList<>(Arrays.asList(remote.getSharees())));
         file.setRichWorkspace(remote.getRichWorkspace());
+        file.setImageDimension(remote.getImageDimension());
 
         return file;
     }

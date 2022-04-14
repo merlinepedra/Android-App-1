@@ -35,7 +35,7 @@ import java.util.List;
  */
 public class ProviderMeta {
     public static final String DB_NAME = "filelist";
-    public static final int DB_VERSION = 62;
+    public static final int DB_VERSION = 63;
 
     private ProviderMeta() {
         // No instance
@@ -117,6 +117,7 @@ public class ProviderMeta {
         public static final String FILE_NOTE = "note";
         public static final String FILE_SHAREES = "sharees";
         public static final String FILE_RICH_WORKSPACE = "rich_workspace";
+        public static final String FILE_METADATA_SIZE = "metadata_size";
 
         public static final List<String> FILE_ALL_COLUMNS = Collections.unmodifiableList(Arrays.asList(
             _ID,
@@ -153,7 +154,8 @@ public class ProviderMeta {
             FILE_OWNER_DISPLAY_NAME,
             FILE_NOTE,
             FILE_SHAREES,
-            FILE_RICH_WORKSPACE));
+            FILE_RICH_WORKSPACE,
+            FILE_METADATA_SIZE));
 
         public static final String FILE_DEFAULT_SORT_ORDER = FILE_NAME + " collate nocase asc";
 

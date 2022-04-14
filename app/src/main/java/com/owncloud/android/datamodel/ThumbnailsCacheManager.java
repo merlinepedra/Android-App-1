@@ -590,13 +590,15 @@ public final class ThumbnailsCacheManager {
                                 String uri;
                                 if (file instanceof OCFile) {
                                     Point p = getScreenDimension();
-//                                    pxW = p.x / 2;
-//                                    pxH = p.y / 5;
-                                    pxH = 600;
-                                    pxW = 600;
+                                    pxW = p.x / 2;
+                                    pxH = p.y / 5;
+//                                    pxH = 600;
+//                                    pxW = 600;
                                     uri = mClient.getBaseUri() + "/index.php/core/preview.png?file="
                                         + URLEncoder.encode(file.getRemotePath())
                                         + "&x=" + pxW + "&y=" + pxH + "&a=1&mode=fill&forceIcon=0";
+
+                                    Log_OC.d("Preview", "URL: " + uri);
 
 //                                    uri = mClient.getBaseUri() + "/index.php/apps/files/api/v1/thumbnail/" +
 //                                        pxW + "/" + pxH + Uri.encode(file.getRemotePath(), "/");

@@ -884,14 +884,15 @@ public final class DisplayUtils {
                     stopShimmer(shimmerThumbnail, thumbnailView);
 
                     if (MimeTypeUtil.isVideo(file)) {
-                        Bitmap withOverlay = ThumbnailsCacheManager.addVideoOverlay(thumbnail);
-                        thumbnailView.setImageBitmap(withOverlay);
+//                        Bitmap withOverlay = ThumbnailsCacheManager.addVideoOverlay(thumbnail);
+                        thumbnailView.setImageBitmap(thumbnail);
                     } else {
-                        if (gridView) {
-                            BitmapUtils.setRoundedBitmapForGridMode(thumbnail, thumbnailView);
-                        } else {
-                            BitmapUtils.setRoundedBitmap(thumbnail, thumbnailView);
-                        }
+                        thumbnailView.setImageBitmap(thumbnail);
+//                        if (gridView) {
+//                            BitmapUtils.setRoundedBitmapForGridMode(thumbnail, thumbnailView);
+//                        } else {
+//                            BitmapUtils.setRoundedBitmap(thumbnail, thumbnailView);
+//                        }
                     }
                 } else {
                     // generate new thumbnail
@@ -922,7 +923,7 @@ public final class DisplayUtils {
 
                             if (shimmerThumbnail != null && shimmerThumbnail.getVisibility() == View.GONE) {
                                 if (gridView) {
-                                    configShimmerGridImageSize(shimmerThumbnail, preferences.getGridColumns());
+                                    // configShimmerGridImageSize(shimmerThumbnail, preferences.getGridColumns());
                                 }
                                 startShimmer(shimmerThumbnail, thumbnailView);
                             }

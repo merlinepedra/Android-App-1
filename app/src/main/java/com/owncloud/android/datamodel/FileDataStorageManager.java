@@ -41,6 +41,7 @@ import com.google.gson.JsonSyntaxException;
 import com.nextcloud.client.account.User;
 import com.owncloud.android.MainApp;
 import com.owncloud.android.db.ProviderMeta.ProviderTableMeta;
+import com.owncloud.android.lib.common.network.ImageDimension;
 import com.owncloud.android.lib.common.network.WebdavEntry;
 import com.owncloud.android.lib.common.operations.RemoteOperationResult;
 import com.owncloud.android.lib.common.utils.Log_OC;
@@ -504,6 +505,7 @@ public class FileDataStorageManager {
 
     private ContentValues createContentValueForFile(OCFile file, OCFile folder) {
         ContentValues cv = new ContentValues();
+        Gson gson = new Gson();
         cv.put(ProviderTableMeta.FILE_MODIFIED, file.getModificationTimestamp());
         cv.put(ProviderTableMeta.FILE_MODIFIED_AT_LAST_SYNC_FOR_DATA, file.getModificationTimestampAtLastSyncForData());
         cv.put(ProviderTableMeta.FILE_CREATION, file.getCreationTimestamp());
@@ -535,8 +537,9 @@ public class FileDataStorageManager {
         cv.put(ProviderTableMeta.FILE_OWNER_ID, file.getOwnerId());
         cv.put(ProviderTableMeta.FILE_OWNER_DISPLAY_NAME, file.getOwnerDisplayName());
         cv.put(ProviderTableMeta.FILE_NOTE, file.getNote());
-        cv.put(ProviderTableMeta.FILE_SHAREES, new Gson().toJson(file.getSharees()));
+        cv.put(ProviderTableMeta.FILE_SHAREES, gson.toJson(file.getSharees()));
         cv.put(ProviderTableMeta.FILE_RICH_WORKSPACE, file.getRichWorkspace());
+        cv.put(ProviderTableMeta.FILE_METADATA_SIZE, gson.toJson(file.getImageDimension()));
 
         return cv;
     }
@@ -1045,6 +1048,8 @@ public class FileDataStorageManager {
                     ocFile.setSharees(new ArrayList<>());
                 }
             }
+            String metadataSize = cursor.getString(cursor.getColumnIndexOrThrow(ProviderTableMeta.FILE_METADATA_SIZE));
+            ocFile.setImageDimension(new Gson().fromJson(metadataSize, ImageDimension.class));
         }
 
         return ocFile;

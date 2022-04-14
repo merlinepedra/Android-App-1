@@ -753,7 +753,8 @@ public class FileContentProvider extends ContentProvider {
                        + ProviderTableMeta.FILE_OWNER_DISPLAY_NAME + TEXT
                        + ProviderTableMeta.FILE_NOTE + TEXT
                        + ProviderTableMeta.FILE_SHAREES + TEXT
-                       + ProviderTableMeta.FILE_RICH_WORKSPACE + " TEXT);"
+                       + ProviderTableMeta.FILE_RICH_WORKSPACE + TEXT
+                       + ProviderTableMeta.FILE_METADATA_SIZE + " TEXT);"
         );
     }
 
@@ -2446,6 +2447,24 @@ public class FileContentProvider extends ContentProvider {
 
                     // force refresh
                     db.execSQL("UPDATE capabilities SET etag = '' WHERE 1=1");
+
+                    upgraded = true;
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+            }
+
+            if (!upgraded) {
+                Log_OC.i(SQL, String.format(Locale.ENGLISH, UPGRADE_VERSION_MSG, oldVersion, newVersion));
+            }
+
+            if (oldVersion < 63 && newVersion >= 63) {
+                Log_OC.i(SQL, "Entering in the #63 add metadata size to files");
+                db.beginTransaction();
+                try {
+                    db.execSQL(ALTER_TABLE + ProviderTableMeta.FILE_TABLE_NAME +
+                                   ADD_COLUMN + ProviderTableMeta.FILE_METADATA_SIZE + " TEXT ");
 
                     upgraded = true;
                     db.setTransactionSuccessful();
