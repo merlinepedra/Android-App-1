@@ -51,6 +51,7 @@ import java.util.concurrent.TimeUnit;
 import androidx.annotation.NonNull;
 
 import static com.owncloud.android.utils.FileStorageUtils.getInternalTemporalPath;
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
@@ -61,8 +62,8 @@ import static junit.framework.TestCase.assertTrue;
 
 public class UploadIT extends AbstractOnServerIT {
     private static final String FOLDER = "/testUpload/";
-    private final String emptyFileName = "/empty.txt";
-    private final String nonEmptyFileName = "/nonEmpty.txt";
+    private final String emptyFileName = "empty.txt";
+    private final String nonEmptyFileName = "nonEmpty.txt";
 
     private final UploadsStorageManager uploadsStorageManager =
         new UploadsStorageManager(UserAccountManagerImpl.fromContext(targetContext),
@@ -203,6 +204,7 @@ public class UploadIT extends AbstractOnServerIT {
 
         File originalFile = new File(getInternalTemporalPath(account.name, targetContext) + nonEmptyFileName);
         OCFile uploadedFile = fileDataStorageManager.getFileByDecryptedRemotePath(FOLDER + nonEmptyFileName);
+        assertNotNull(uploadedFile);
 
         assertFalse(originalFile.exists());
         assertFalse(new File(uploadedFile.getStoragePath()).exists());

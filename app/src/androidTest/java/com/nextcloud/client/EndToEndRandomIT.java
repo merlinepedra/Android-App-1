@@ -84,7 +84,7 @@ public class EndToEndRandomIT extends AbstractOnServerIT {
     private OCFile currentFolder;
     private final int actionCount = 20;
     private String rootEncFolder = "/e/";
-    private final String nonEmptyFileName = "/nonEmpty.txt";
+    private final String nonEmptyFileName = "nonEmpty.txt";
 
     @Rule
     public RetryTestRule retryTestRule = new RetryTestRule();

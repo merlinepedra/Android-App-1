@@ -99,12 +99,13 @@ public final class FileStorageUtils {
      */
     public static String getInternalTemporalPath(String accountName, Context context) {
         return context.getFilesDir()
-                + File.separator
-                + MainApp.getDataFolder()
-                + File.separator
-                + "tmp"
-                + File.separator
-                + Uri.encode(accountName, "@");
+            + File.separator
+            + MainApp.getDataFolder()
+            + File.separator
+            + "tmp"
+            + File.separator
+            + Uri.encode(accountName, "@")
+            + File.separator;
         // URL encoding is an 'easy fix' to overcome that NTFS and FAT32 don't allow ":" in file names,
         // that can be in the accountName since 0.1.190B
     }
