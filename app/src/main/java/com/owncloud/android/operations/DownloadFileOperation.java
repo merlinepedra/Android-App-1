@@ -24,6 +24,7 @@ package com.owncloud.android.operations;
 import android.accounts.Account;
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import com.nextcloud.client.account.User;
@@ -42,6 +43,7 @@ import com.owncloud.android.utils.FileStorageUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -207,10 +209,13 @@ public class DownloadFileOperation extends RemoteOperation {
                     return new RemoteOperationResult(e);
                 }
             }
-            moved = tmpFile.renameTo(newFile);
-            newFile.setLastModified(file.getModificationTimestamp());
-            if (!moved) {
+
+            try {
+                UploadFileOperation.move(tmpFile, newFile, file);
+                newFile.setLastModified(file.getModificationTimestamp());
+            } catch (IOException e) {
                 result = new RemoteOperationResult(RemoteOperationResult.ResultCode.LOCAL_STORAGE_NOT_MOVED);
+                Log.e(TAG, "Error moving file", e);
             }
         }
         Log_OC.i(TAG, "Download of " + file.getRemotePath() + " to " + getSavePath() + ": " +
