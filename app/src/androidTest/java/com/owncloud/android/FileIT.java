@@ -4,10 +4,15 @@ import com.owncloud.android.datamodel.OCFile;
 import com.owncloud.android.lib.common.operations.RemoteOperationResult;
 import com.owncloud.android.operations.CreateFolderOperation;
 import com.owncloud.android.operations.RemoveFileOperation;
+import com.owncloud.android.operations.RenameFileOperation;
+import com.owncloud.android.operations.SynchronizeFolderOperation;
 import com.owncloud.android.operations.common.SyncOperation;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.io.File;
+import java.io.IOException;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -76,5 +81,49 @@ public class FileIT extends AbstractOnServerIT {
 
         getStorageManager().deleteAllFiles();
         assertEquals(0, getStorageManager().getAllFiles().size());
+    }
+
+    @Test
+    public void testRenameFolder() throws IOException {
+        // create folder
+        createFolder("/test/");
+
+        // upload file inside it
+        uploadFile(getDummyFile("nonEmpty.txt"), "/test/text.txt");
+
+        // sync folder
+        assertTrue(new SynchronizeFolderOperation(targetContext,
+                                                  "/test/",
+                                                  user,
+                                                  System.currentTimeMillis(),
+                                                  fileDataStorageManager)
+                       .execute(targetContext)
+                       .isSuccess());
+
+        // check if file exists
+        assertTrue(
+            new File(fileDataStorageManager.getFileByDecryptedRemotePath("/test/").getStoragePath())
+                .exists()
+                  );
+        assertTrue(
+            new File(fileDataStorageManager.getFileByDecryptedRemotePath("/test/text.txt").getStoragePath())
+                .exists()
+                  );
+
+        // Rename
+        assertTrue(
+            new RenameFileOperation("/test/", "test123", fileDataStorageManager)
+                .execute(targetContext)
+                .isSuccess()
+                  );
+
+        assertTrue(
+            new File(fileDataStorageManager.getFileByDecryptedRemotePath("/test123/").getStoragePath())
+                .exists()
+                  );
+        assertTrue(
+            new File(fileDataStorageManager.getFileByDecryptedRemotePath("/test123/text.txt").getStoragePath())
+                .exists()
+                  );
     }
 }
