@@ -699,7 +699,14 @@ public class FileDataStorageManager {
                     contentValues.put(
                         ProviderTableMeta.FILE_PATH,
                         targetPath + childFile.getRemotePath().substring(lengthOfOldPath)
-                    );
+                                     );
+
+                    if (!childFile.isEncrypted()) {
+                        contentValues.put(
+                            ProviderTableMeta.FILE_PATH_DECRYPTED,
+                            targetPath + childFile.getRemotePath().substring(lengthOfOldPath)
+                                         );
+                    }
 
                     if (childFile.getStoragePath() != null && childFile.getStoragePath().startsWith(defaultSavePath)) {
                         // update link to downloaded content - but local move is not done here!
