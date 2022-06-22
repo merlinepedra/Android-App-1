@@ -18,6 +18,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 
 /**
@@ -101,14 +102,11 @@ public class FileIT extends AbstractOnServerIT {
                        .isSuccess());
 
         // check if file exists
-        assertTrue(
-            new File(fileDataStorageManager.getFileByDecryptedRemotePath("/test/").getStoragePath())
-                .exists()
-                  );
-        assertTrue(
-            new File(fileDataStorageManager.getFileByDecryptedRemotePath("/test/text.txt").getStoragePath())
-                .exists()
-                  );
+        String storagePath1 = fileDataStorageManager.getFileByDecryptedRemotePath("/test/").getStoragePath();
+        assertTrue(new File(storagePath1).exists());
+
+        String storagePath2 = fileDataStorageManager.getFileByDecryptedRemotePath("/test/text.txt").getStoragePath();
+        assertTrue(new File(storagePath2).exists());
 
         // Rename
         assertTrue(
@@ -117,6 +115,7 @@ public class FileIT extends AbstractOnServerIT {
                 .isSuccess()
                   );
 
+        // after rename check new location
         assertTrue(
             new File(fileDataStorageManager.getFileByDecryptedRemotePath("/test123/").getStoragePath())
                 .exists()
@@ -125,5 +124,13 @@ public class FileIT extends AbstractOnServerIT {
             new File(fileDataStorageManager.getFileByDecryptedRemotePath("/test123/text.txt").getStoragePath())
                 .exists()
                   );
+
+        // old files do no exist
+        assertNull(fileDataStorageManager.getFileByDecryptedRemotePath("/test/"));
+        assertNull(fileDataStorageManager.getFileByDecryptedRemotePath("/test/text.txt"));
+
+        // local files also do not exist
+        assertFalse(new File(storagePath1).exists());
+        assertFalse(new File(storagePath2).exists());
     }
 }
