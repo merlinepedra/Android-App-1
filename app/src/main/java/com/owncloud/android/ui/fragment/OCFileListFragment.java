@@ -1318,7 +1318,7 @@ public class OCFileListFragment extends ExtendedListFragment implements
                     storageManager,
                     onlyOnDevice,
                     mLimitToMimeType
-                );
+                                      );
 
                 OCFile previousDirectory = mFile;
                 mFile = directory;
@@ -1335,6 +1335,9 @@ public class OCFileListFragment extends ExtendedListFragment implements
                     getRecyclerView().scrollToPosition(0);
                 }
             }
+        } else if (isSearchEventSet(searchEvent)) {
+            handleSearchEvent(searchEvent);
+            mRefreshListLayout.setRefreshing(false);
         }
     }
 
