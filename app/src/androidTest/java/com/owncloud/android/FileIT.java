@@ -86,8 +86,10 @@ public class FileIT extends AbstractOnServerIT {
 
     @Test
     public void testRenameFolder() throws IOException {
+        String folderPath = "/test/";
+
         // create folder
-        createFolder("/test/");
+        createFolder(folderPath);
 
         // upload file inside it
         uploadFile(getDummyFile("nonEmpty.txt"), "/test/text.txt");
@@ -102,15 +104,17 @@ public class FileIT extends AbstractOnServerIT {
                        .isSuccess());
 
         // check if file exists
-        String storagePath1 = fileDataStorageManager.getFileByDecryptedRemotePath("/test/").getStoragePath();
+        String storagePath1 = fileDataStorageManager.getFileByDecryptedRemotePath(folderPath).getStoragePath();
         assertTrue(new File(storagePath1).exists());
 
-        String storagePath2 = fileDataStorageManager.getFileByDecryptedRemotePath("/test/text.txt").getStoragePath();
+        String storagePath2 = fileDataStorageManager
+            .getFileByDecryptedRemotePath(folderPath + "text.txt")
+            .getStoragePath();
         assertTrue(new File(storagePath2).exists());
 
         // Rename
         assertTrue(
-            new RenameFileOperation("/test/", "test123", fileDataStorageManager)
+            new RenameFileOperation(folderPath, "test123", fileDataStorageManager)
                 .execute(targetContext)
                 .isSuccess()
                   );
@@ -126,8 +130,8 @@ public class FileIT extends AbstractOnServerIT {
                   );
 
         // old files do no exist
-        assertNull(fileDataStorageManager.getFileByDecryptedRemotePath("/test/"));
-        assertNull(fileDataStorageManager.getFileByDecryptedRemotePath("/test/text.txt"));
+        assertNull(fileDataStorageManager.getFileByDecryptedRemotePath(folderPath));
+        assertNull(fileDataStorageManager.getFileByDecryptedRemotePath(folderPath + "text.txt"));
 
         // local files also do not exist
         assertFalse(new File(storagePath1).exists());
