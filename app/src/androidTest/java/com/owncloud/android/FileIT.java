@@ -44,12 +44,14 @@ public class FileIT extends AbstractOnServerIT {
         assertTrue(file.isFolder());
 
         // cleanup
-        new RemoveFileOperation(file, false, user, false, targetContext, getStorageManager()).execute(client);
+        assertTrue(new RemoveFileOperation(file, false, user, false, targetContext, getStorageManager())
+                       .execute(client)
+                       .isSuccess());
     }
 
     @Test
     public void testCreateNonExistingSubFolder() {
-        String path = "/testFolder/1/2/3/4/5/";
+        String path = "/subFolder/1/2/3/4/5/";
         // folder does not exist yet
         assertNull(getStorageManager().getFileByPath(path));
 
@@ -86,17 +88,17 @@ public class FileIT extends AbstractOnServerIT {
 
     @Test
     public void testRenameFolder() throws IOException {
-        String folderPath = "/test/";
+        String folderPath = "/testRenameFolder/";
 
         // create folder
         createFolder(folderPath);
 
         // upload file inside it
-        uploadFile(getDummyFile("nonEmpty.txt"), "/test/text.txt");
+        uploadFile(getDummyFile("nonEmpty.txt"), folderPath + "text.txt");
 
         // sync folder
         assertTrue(new SynchronizeFolderOperation(targetContext,
-                                                  "/test/",
+                                                  folderPath,
                                                   user,
                                                   System.currentTimeMillis(),
                                                   fileDataStorageManager)
